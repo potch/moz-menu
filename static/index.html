@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link href='//fonts.googleapis.com/css?family=Fira+Sans:400italic,400,600italic,600' rel='stylesheet' type='text/css'>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        font-family: 'Fira Sans', sans-serif;
+        display: flex;
+        flex-direction: column;
+        font-size: 3.5vmin;
+        background: #EAEFF2;
+        line-height: 1.4;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 8vmin;
+        margin: .5vmin 0 0;
+      }
+      h1, h2, strong {
+        font-weight: 700;
+      }
+      strong {
+        font-size: 120%;
+        color: #000;
+      }
+      header {
+        text-align: center;
+        color: #fff;
+        background: #C13832;
+        padding: 1vmin;
+      }
+      h2 {
+        text-align: center;
+        margin: 0;
+      }
+      article {
+        flex: 1;
+        display: flex;
+        margin-top: 1em;
+      }
+      section {
+        flex: 1;
+        background: #fff;
+        padding: 1em;
+      }
+      section + section {
+        margin-left: 1em;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        color: #333;
+      }
+      li + li {
+        margin-top: 1em;
+      }
+      .date {
+        color: #666;
+        font-size: 80%;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>What's for Lunch in Mountain View?</h1>
+    </header>
+    <article>
+      <section>
+        <h2>Today <span class="date today"></span></h2>
+        <ul class="menu today">
+        </ul>
+      </section>
+      <section>
+        <h2>Tomorrow <span class="date tomorrow"></span></h2>
+        <ul class="menu tomorrow">
+        </ul>
+      </section>
+    </article>
+    <script>
+
+      function iso(d) {
+        return (d.getMonth() + 1) + '/' + d.getDate();
+      }
+
+      var pretty = {
+        'SOUPS ~ STEWS ~ CHILIS': 'Soup',
+        'VEGETARIAN ENTREE': 'Vegetarian',
+        'ENTREE': 'Entree'
+      };
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/menu');
+      xhr.onload = function () {
+        var obj = JSON.parse(xhr.response);
+        renderMenu(obj, 'today');
+        renderMenu(obj, 'tomorrow');
+        var today = new Date();
+        document.querySelector('.date.today').innerHTML = '(' + iso(today) + ')';
+        today.setDate(today.getDate() + 1);
+        document.querySelector('.date.tomorrow').innerHTML = '(' + iso(today) + ')';
+      }
+      xhr.send();
+
+      function renderMenu(menu, day) {
+        if (!menu[day]) {
+          return;
+        }
+        var el = document.querySelector('.menu.' + day);
+        var m = menu[day];
+        for (p in m) {
+          var dish = m[p];
+          dish = dish.replace(/\([^\)]+\)/g, '');
+          if (p in pretty) {
+            el.innerHTML += '<li><strong>' + pretty[p] + ':</strong> ' + dish + '</li>';
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
