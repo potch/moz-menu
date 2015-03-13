@@ -18,47 +18,77 @@ app.get('/menu', function (req, res) {
   res.json(menu);
 });
 
-function url(week, day) {
+function url(d) {
+  var day = d.getDay();
+  var week = getWeek(d);
   return 'http://dining.guckenheimer.com/clients/mozilla/fss/fss.nsf/weeklyMenuLaunch/9QBSJJ~' + week + '/$file/day' + day + '.htm';
 }
 
-function getWeek() {
-  var today = new Date();
-  if (today.getHours() > 0) {
-    today.setDate(today.getDate() + 1);
+function getWeek(date) {
+  date = new Date(date.getTime());
+  while(date.getDay() != 1) {
+    date.setDate(date.getDate() - 1);
   }
-  if (today.getDay() > 4) {
-    today.setDate(today.getDate() + 7);
-  }
-  while(today.getDay() != 1) {
-    today.setDate(today.getDate() - 1);
-  }
-  var d = ('0' + today.getDate()).substr(-2);
-  var m = ('0' + (today.getMonth() + 1)).substr(-2);
-  var y = today.getFullYear();
+  var d = ('0' + date.getDate()).substr(-2);
+  var m = ('0' + (date.getMonth() + 1)).substr(-2);
+  var y = date.getFullYear();
   return m + '-' + d + '-' + y;
 }
 
+function getToday() {
+  var d = new Date();
+  d.setHours(d.getHours() - 8);
+  return d;
+}
+
+function getTomorrow() {
+  var d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(d.getHours() - 8);
+  if (d.getDay() > 5) {
+    while(d.getDay() != 1) {
+      d.setDate(d.getDate() + 1);
+    }
+  }
+  return d;
+}
 
 function updateMenu() {
-  var today = new Date();
-  var week = getWeek();
-  var currentDay = today.getDay();
-  request(url(week, currentDay), function (err, res, body) {
-    if (!err) {
-      menu.today = renderMenu(body);
-    }
-    request(url(week, currentDay+1), function (err, res, body) {
-      if (!err) {
-        menu.tomorrow = renderMenu(body);
-      }
-    });
+  var today = getToday();
+  var tomorrow = getTomorrow();
+  getMenu(today, function (m) {
+    menu.today = {
+      date: today.getTime(),
+      menu: m
+    };
+    console.log(m);
+  });
+  getMenu(tomorrow, function (m) {
+    menu.tomorrow = {
+      date: tomorrow.getTime(),
+      menu: m
+    };
   });
 }
 
 setInterval(updateMenu, 1000 * 60 * 15);
 
-function renderMenu(body) {
+function getMenu(d, cb) {
+  if (d.getDay() === 5) {
+    cb({
+      'ENTREE': 'Pizza and Wings!',
+      'VEGETARIAN ENTREE': 'Pizza and Expanded Salad Bar'
+    });
+  } else {
+    request(url(d), function (err, res, body) {
+      if (!err) {
+        cb(parseMenu(body));
+      }
+    });
+  }
+}
+
+function parseMenu(body) {
   var $ = cheerio.load(body);
   var headers = $('#center_text > div[style]');
   var items = $('#center_text > div[style] + div');

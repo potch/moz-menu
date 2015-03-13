@@ -82,7 +82,7 @@
         </ul>
       </section>
       <section>
-        <h2>Tomorrow <span class="date tomorrow"></span></h2>
+        <h2><span class="day tomorrow"></span> <span class="date tomorrow"></span></h2>
         <ul class="menu tomorrow">
         </ul>
       </section>
@@ -93,6 +93,16 @@
         return (d.getMonth() + 1) + '/' + d.getDate();
       }
 
+      var days = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+      ];
+
       var pretty = {
         'SOUPS ~ STEWS ~ CHILIS': 'Soup',
         'VEGETARIAN ENTREE': 'Vegetarian',
@@ -102,12 +112,14 @@
       xhr.open('GET', '/menu');
       xhr.onload = function () {
         var obj = JSON.parse(xhr.response);
+        console.log(obj);
         renderMenu(obj, 'today');
         renderMenu(obj, 'tomorrow');
         var today = new Date();
         document.querySelector('.date.today').innerHTML = '(' + iso(today) + ')';
-        today.setDate(today.getDate() + 1);
-        document.querySelector('.date.tomorrow').innerHTML = '(' + iso(today) + ')';
+        var tomorrow = new Date(obj.tomorrow.date);
+        document.querySelector('.day.tomorrow').innerHTML = days[tomorrow.getDay()];
+        document.querySelector('.date.tomorrow').innerHTML = '(' + iso(tomorrow) + ')';
       }
       xhr.send();
 
@@ -116,7 +128,7 @@
           return;
         }
         var el = document.querySelector('.menu.' + day);
-        var m = menu[day];
+        var m = menu[day].menu;
         for (p in m) {
           var dish = m[p];
           dish = dish.replace(/\([^\)]+\)/g, '');
