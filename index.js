@@ -18,10 +18,12 @@ app.get('/menu', function (req, res) {
   res.json(menu);
 });
 
+var dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
 function url(d) {
   var day = d.getDay();
   var week = getWeek(d);
-  return 'http://dining.guckenheimer.com/clients/mozilla/fss/fss.nsf/weeklyMenuLaunch/9QBSJJ~' + week + '/$file/day' + day + '.htm';
+  return 'http://dining.guckenheimer.com/clients/mozilla/fss/fss.nsf/weeklyMenuLaunch/9QBSJJ~' + week + '/$file/' + dayNames[day] + '.htm';
 }
 
 function getWeek(date) {
@@ -81,20 +83,26 @@ function getMenu(d, cb) {
     });
   } else {
     request(url(d), function (err, res, body) {
-      if (!err) {
-        cb(parseMenu(body));
+      if (err) {
+        console.error('error', err);
+        return;
       }
+      cb(parseMenu(body));
     });
   }
 }
 
 function parseMenu(body) {
   var $ = cheerio.load(body);
-  var headers = $('#center_text > div[style]');
-  var items = $('#center_text > div[style] + div');
+  var headers = $('span[style]');
+  var items = $('span[style] + br + span');
   var o = {};
   for (var i = 0; i < headers.length; i++) {
+    console.log(headers.eq(i).html(), items.eq(i).html());
     o[headers.eq(i).text()] = items.eq(i).text();
+  }
+  if (Object.keys(o).length === 0) {
+    console.warn('no menu data found!');
   }
   return o;
 }
