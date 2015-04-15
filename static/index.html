@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <link href='//fonts.googleapis.com/css?family=Fira+Sans:400italic,400,600italic,600' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Sonsie+One|Rancho|Jura:400,600' rel='stylesheet' type='text/css'>
     <style>
       * {
         box-sizing: border-box;
@@ -13,47 +13,122 @@
         margin: 0;
       }
       body {
-        font-family: 'Fira Sans', sans-serif;
+        font-family: "Jura";
         display: flex;
         flex-direction: column;
         font-size: 3.5vmin;
         background: #EAEFF2;
         line-height: 1.4;
         padding: 1em;
+        background-color: #eee;
+        background-image: linear-gradient(45deg, #333 25%, transparent 25%, transparent 75%, #333 75%, #333),
+        linear-gradient(-45deg, #333 25%, transparent 25%, transparent 75%, #333 75%, #333);
+        background-size:100px 100px;
       }
       h1 {
+        font-family: 'Sonsie One', sans-serif;
         font-size: 8vmin;
+        display: inline-block;
+        color: #000;
+        padding: 2vmin 2vmin 0;
+        border-radius: 2vmin 2vmin 0 0;
+        background: #fff8f0;
         margin: .5vmin 0 0;
+        z-index: 1;
+        box-shadow: 0 -.5vmin 1vmin -.5vmin rgba(0,0,0,.5);
+        position: relative;
+        margin-bottom: -2vmin;
       }
-      h1, h2, strong {
-        font-weight: 700;
+      h1 div {
+        box-shadow: 0 .5vmin .5vmin rgba(0,0,0,.5) inset;
+        background: #BCD7CB;
+        display: block;
+        border-radius: 1vmin;
+        padding: 2vmin 6vmin 2vmin;
+        color: #922A35;
+        text-shadow:
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 1px #BCD7CB,
+          0 0 2px #000,
+          0 0 2px #000,
+          0 0 2px #000,
+          0 0 2px #000,
+          0 0 2px #000,
+          0 0 2px #000,
+          0 0 2px #000;
+
+        }
+      h1, h2 {
+        font-weight: 400;
       }
       strong {
+        font-weight: 900;
         font-size: 120%;
         color: #000;
       }
       header {
         text-align: center;
         color: #fff;
-        background: #C13832;
-        padding: 1vmin;
+        padding: 1vmin 1vmin 0 1vmin;
       }
       h2 {
+        font-family: 'Rancho';
         text-align: center;
         margin: 0;
+        font-size: 6vmin;
+        color: #fff8f0;
+        text-shadow: 0 0 2px #000;
+        line-height: 1em;
+      }
+      h2 div {
+        display: inline-block;
+        position: relative;
+        z-index: 1;
+        padding: 1vmin 4vmin;
+        background: #922A35;
+      }
+      h2 div:before, h2 div:after {
+        content: '';
+        display: block;
+        background: #922A35;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        transform: skewX(45deg);
+      }
+      h2 div:after {
+        transform: skewX(-45deg);
       }
       article {
+        box-shadow: 0 1vmin 2vmin #000;
         flex: 1;
         display: flex;
-        margin-top: 1em;
+        padding: 1.5em 1em 1em;
+        background: #fff8f0;
+        border-radius: 2vmin;
       }
       section {
         flex: 1;
-        background: #fff;
-        padding: 1em;
+        padding: .5em;
       }
       section + section {
+        padding-left: 1.5em;
         margin-left: 1em;
+        border-left:1px dashed #666;
       }
       ul {
         list-style-type: none;
@@ -73,16 +148,16 @@
   </head>
   <body>
     <header>
-      <h1>What's for Lunch in Mountain View?</h1>
+      <h1><div>What's Cooking?</div></h1>
     </header>
     <article>
       <section>
-        <h2>Today <span class="date today"></span></h2>
+        <h2><div>Today <span class="date today"></span></div></h2>
         <ul class="menu today">
         </ul>
       </section>
       <section>
-        <h2><span class="day tomorrow"></span> <span class="date tomorrow"></span></h2>
+        <h2><div><span class="day tomorrow"></span> <span class="date tomorrow"></span></div></h2>
         <ul class="menu tomorrow">
         </ul>
       </section>
@@ -116,10 +191,10 @@
         renderMenu(obj, 'today');
         renderMenu(obj, 'tomorrow');
         var today = new Date();
-        document.querySelector('.date.today').innerHTML = '(' + iso(today) + ')';
+        // document.querySelector('.date.today').innerHTML = '(' + iso(today) + ')';
         var tomorrow = new Date(obj.tomorrow.date);
         document.querySelector('.day.tomorrow').innerHTML = days[tomorrow.getDay()];
-        document.querySelector('.date.tomorrow').innerHTML = '(' + iso(tomorrow) + ')';
+        // document.querySelector('.date.tomorrow').innerHTML = '(' + iso(tomorrow) + ')';
       }
       xhr.send();
 
