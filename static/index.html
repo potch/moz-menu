@@ -178,10 +178,14 @@
         'Saturday'
       ];
 
-      var pretty = {
+      var merge = {
+        'SIDE 1': 'Sides',
+        'SIDE 2': 'Sides',
+        'SIDE 3': 'Sides',
         'SOUPS ~ STEWS ~ CHILIS': 'Soup',
-        'VEGETARIAN ENTREE': 'Vegetarian',
-        'ENTREE': 'Entree'
+        'VEGETARIAN SOUP': 'Soup',
+        'ENTREE': 'Entree',
+        'VEGETARIAN ENTREE': 'Vegetarian'
       };
       var xhr = new XMLHttpRequest();
       xhr.open('GET', '/menu');
@@ -204,12 +208,21 @@
         }
         var el = document.querySelector('.menu.' + day);
         var m = menu[day].menu;
+        var pretty = {}
         for (p in m) {
           var dish = m[p];
           dish = dish.replace(/\([^\)]+\)/g, '');
-          if (p in pretty) {
-            el.innerHTML += '<li><strong>' + pretty[p] + ':</strong> ' + dish + '</li>';
+          if (p in merge) {
+            var key = merge[p];
+            if (!pretty[key]) {
+              pretty[key] = [];
+            }
+            pretty[key].push(dish);
           }
+        }
+        for (p in pretty) {
+          var dish = pretty[p].join(', ');
+          el.innerHTML += '<li><strong>' + p + ':</strong> ' + dish + '</li>';
         }
       }
     </script>
